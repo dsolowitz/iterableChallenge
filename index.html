@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Optional; provides methods for query string parsing and working with cookies -->
+    <script
+      type="text/javascript"
+      src="https://js.iterable.com/iterableUtils.js"
+    ></script>
+
+    <!-- Enter an email address, then click the button to track an event -->
+    Email Address:
+    <input type="text" id="email" />
+    <button type="button" onclick="identifyUser()">Identify User</button>
+    <button type="button" onclick="customEvent()">Fun Events!</button>
+    <button type="button" onclick="getMessages()">See Messages</button>
+
+    <script>
+      var _iaq = _iaq || [];
+      var click = 0;
+
+      function getMessages() {
+        //fetch message data
+        let returnData;
+        fetch(
+          "https://api.iterable.com/api/inApp/getMessages?email=solowitz.d@gmail.com&count=1&platform=Web",
+          {
+            headers: {
+              "api-key": "ff288e91e5f9442cb6ce6ea238886298 ",
+            },
+          }
+        )
+          .then((result) => result.json())
+          .then((parsed) => {
+            let message = parsed.inAppMessages[0].content.html;
+
+            document.getElementById("bigWin").innerHTML = message; //render returned html data
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+
+      // Identify the user and set some fields on their Iterable profile
+      function identifyUser() {
+        _iaq.push([
+          "identify",
+          document.getElementById("email").value,
+          {
+            firstName: "David",
+            isWebUser: "true",
+            SA_WebUser_Test_Key: "completed",
+          },
+        ]);
+      }
+
+      function customEvent() {
+        _iaq.push([
+          "track",
+          "webSATestEvent",
+          {
+            eventName: "webSATestEvent",
+            platform: "web",
+            isTestEvent: "true",
+            url: "https://iterable.com/sa-test/David",
+            secret_code_key: "Code_2022",
+          },
+        ]);
+      }
+      // Track a click event, passing a click count (from the current session)
+      // that will be stored in the event's dataFields property
+
+      // Replace <API key> with an Iterable API key (of type JavaScriptSDK)
+      _iaq.push(["account", "ff288e91e5f9442cb6ce6ea238886298"]);
+
+      (function () {
+        var b = document.createElement("script");
+        b.type = "text/javascript";
+        b.async = true;
+        b.src = "https://js.iterable.com/analytics.js";
+        var a = document.getElementsByTagName("script")[0];
+        a.parentNode.insertBefore(b, a);
+      })();
+    </script>
+    <div id="bigWin"></div>
+  </body>
+</html>
